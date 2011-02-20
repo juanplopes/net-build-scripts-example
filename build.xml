@@ -1,12 +1,16 @@
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Test"> 
-  <PropertyGroup> 
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Test">
+  <PropertyGroup>
     <BuildDir>$(MSBuildProjectDirectory)\build\</BuildDir>
 
-	<TestAssembly>$(BuildDir)HelloWorld.Tests.dll</TestAssembly>
-	
+    <TestAssembly>$(BuildDir)HelloWorld.Tests.dll</TestAssembly>
+
     <SourceDir>src\</SourceDir>
     <Configuration>Release</Configuration>
     <Platform>Any CPU</Platform>
+
+    <BuildProperties>
+      Configuration=$(Configuration);Platform=$(Platform);OutputPath=$(BuildDir)
+    </BuildProperties>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,13 +20,13 @@
   <Import Project="util\msbuild\MSBuild.Community.Tasks.Targets"/>
 
   <Target Name="Clean">
-    <MSBuild Projects="@(SolutionFile)" Targets="Clean" Properties="Configuration=$(Configuration);Platform=$(Platform);OutputPath=$(BuildDir)"/>
+    <MSBuild Projects="@(SolutionFile)" Targets="Clean" Properties="$(BuildProperties)"/>
     <DeleteTree Directories="$(BuildDir)" ContinueOnError="true"/>
   </Target>
- 
+
 
   <Target Name="Build">
-    <MSBuild Projects="@(SolutionFile)" Properties="Configuration=$(Configuration);Platform=$(Platform);OutputPath=$(BuildDir)"/>
+    <MSBuild Projects="@(SolutionFile)" Properties="$(BuildProperties)"/>
   </Target>
 
   <Target Name="Rebuild">
@@ -32,5 +36,4 @@
   <Target Name="Test" DependsOnTargets="Build">
     <Nunit Assemblies="$(TestAssembly)" ToolPath="util\nunit"/>
   </Target>
-
 </Project>
